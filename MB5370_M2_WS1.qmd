@@ -6,6 +6,7 @@ editor: visual
 ---
 
 # Housekeeping
+
 ```{r}
 ## Inventory every active object currently residing in session RAM
 objects()
@@ -15,5 +16,147 @@ rm(list = ls())
 objects()
 ```
 
+# Penguin Morphology
 
+### Load Data and Packages
 
+```{r}
+# Run the data preparation script
+source("code/diw_sensor.R")
+```
+
+## Variation in Body Mass Across Species and Island
+
+```{r}
+# Calculate mean body mass by species and island
+mass_summary <- penguins |>
+  group_by(species, island) |>
+  summarise(
+    mean_mass_g = mean(body_mass_g, na.rm = TRUE)
+  )
+
+mass_summary
+```
+
+## Body Mass Distribution
+
+```{r}
+# Visualise body mass across species and islands
+penguins |>
+   filter(!is.na(body_mass_g)) |>
+  ggplot(aes(x = species, y = body_mass_g, fill = island)) +
+  geom_boxplot() +
+  labs(
+    title = "Body Mass Distribution of Penguins by Species and Island",
+    x = "Species",
+    y = "Body Mass (g)",
+    fill = "Island"
+  ) +
+  theme_minimal()
+```
+
+## Summary Table of Body Mass by Species and Island
+
+```{r}
+# Create summary table by species and island
+mass_summary <- penguins |>
+  group_by(species, island) |>
+  summarise(
+    mean_mass = mean(body_mass_g, na.rm = TRUE),
+    sd_mass = sd(body_mass_g, na.rm = TRUE),
+    n = n(),
+    se_mass = sd_mass / sqrt(n),
+    .groups = "drop"
+  )
+
+# Display summary table
+knitr::kable(
+  mass_summary,
+  digits = 1,
+  col.names = c(
+    "Species",
+    "Island",
+    "Mean Body Mass (g)",
+    "SD (g)",
+    "Sample Size",
+    "SE (g)"
+  ),
+  caption = "Summary of body mass by penguin species and island."
+)
+```
+
+## Mean Body Mass and Variation Using Standard Deviation
+
+Mean body mass was compared across penguin species and islands. Points represent group means, with error bars showing one standard deviation around each mean.
+
+```{r}
+# Summarise body mass and pipe directly into a plot
+mass_compare_plot <- penguins |>
+  group_by(species, island) |>
+  summarise(
+    mean_mass = mean(body_mass_g, na.rm = TRUE),
+    sd_mass = sd(body_mass_g, na.rm = TRUE),
+    n = n(),
+    .groups = "drop"
+  ) |>
+  ggplot(aes(x = species, y = mean_mass, colour = island)) +
+  geom_point(size = 3) +
+  geom_errorbar(
+    aes(
+      ymin = mean_mass - sd_mass,
+      ymax = mean_mass + sd_mass
+    ),
+    width = 0.2
+  ) +
+  labs(
+    title = "Mean Body Mass Across Palmer Penguin Species and Islands",
+    subtitle = "Error bars represent ±1 standard deviation",
+    x = "Species",
+    y = "Mean Body Mass (g)",
+    colour = "Island"
+  ) +
+  theme_minimal()
+
+mass_compare_plot
+```
+
+Comparing body mass across species, standard deviation shows the variation in individual body mass within each group. Larger error bars indicate larger variation in individual body size within a group, whereas smaller error bars indicate body masses to be more similar within a group. However, standard error provides a better estimate of the precision of the mean, especially when sample sizes differ.
+
+## Mean Body Mass and Variation Using Standard Error
+
+Mean body mass was compared across penguin species and islands. Points represent group means, with error bars showing standard error around each mean.
+
+```{r}
+# Summarise body mass and pipe directly into a plot
+mass_compare_plot <- penguins |>
+  group_by(species, island) |>
+  summarise(
+    mean_mass = mean(body_mass_g, na.rm = TRUE),
+    sd_mass = sd(body_mass_g, na.rm = TRUE),
+    n = n(),
+    .groups = "drop"
+  ) |>
+  ggplot(aes(x = species, y = mean_mass, colour = island)) +
+  geom_point(size = 3) +
+  geom_errorbar(
+    aes(
+      ymin = mean_mass - (sd_mass/sqrt(n)),
+      ymax = mean_mass + (sd_mass/sqrt(n))
+    ),
+    width = 0.2
+  ) +
+  labs(
+    title = "Mean Body Mass Across Palmer Penguin Species and Islands",
+    subtitle = "Error bars represent ±1 standard error",
+    x = "Species",
+    y = "Mean Body Mass (g)",
+    colour = "Island"
+  ) +
+  theme_minimal()
+
+mass_compare_plot
+```
+
+### Ecological Interpretation
+
+Mean body mass differed considerably among penguin species. Gentoo penguins have substantially greater body mass when compares to Adelie and Chinstrap penguins. Adelie penguins showed consistant body mass across Biscoe, Dream, and Torgersen Islands, indicating little geographic variation in body size. These patterns suggest that differences in species specific morphology have a greater influence on body size, then geographic differences within this dataset.
