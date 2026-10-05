@@ -207,12 +207,33 @@ biological_signal <- penguins %>%                   # Take the penguins dataset
 print(biological_signal)
 
 
+# Create output folders if they do not already exist
+if (!dir.exists("outputs/figures")) dir.create("outputs/figures")
+if (!dir.exists("outputs/tables")) dir.create("outputs/tables")
+if (!dir.exists("Rdata")) dir.create("Rdata")
 
 
+# Save summary table as a CSV file
+write_csv(
+  biological_signal,
+  "outputs/penguin_species_mass_summary.csv"
+)
 
+# Save summary table as an RDS file
+saveRDS(
+  biological_signal,
+  "outputs/penguin_species_mass_summary.rds"
+)
 
-
-
+# Save your figure 
+ggsave(
+  "outputs/mass_compare_plot.png",
+  plot = mass_compare_plot,
+  width = 120,
+  height = 120,
+  units = "mm",
+  dpi = 300
+)
 
 
 
