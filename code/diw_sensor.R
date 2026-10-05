@@ -226,14 +226,14 @@ saveRDS(
 )
 
 # Save your figure 
-ggsave(
-  "outputs/mass_compare_plot.png",
-  plot = mass_compare_plot,
-  width = 120,
-  height = 120,
-  units = "mm",
-  dpi = 300
-)
+#ggsave(
+  #"outputs/mass_compare_plot.png",
+ # plot = mass_compare_plot,
+  #width = 120,
+  #height = 120,
+  #units = "mm",
+  #dpi = 300
+#)
 
 
 

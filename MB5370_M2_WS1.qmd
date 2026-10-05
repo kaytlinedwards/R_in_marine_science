@@ -5,14 +5,15 @@ format: html
 editor: visual
 ---
 
-# Housekeeping
-
 ```{r}
 #| include: false
+
 ## Inventory every active object currently residing in session RAM
 objects()
+
 ## Purge global environment
 rm(list = ls())
+
 # Confirm that global session memory now completely vacant
 objects()
 ```
