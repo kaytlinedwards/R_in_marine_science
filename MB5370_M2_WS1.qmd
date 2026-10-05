@@ -1,0 +1,19 @@
+---
+title: "MB5370_M2_WS1"
+author: "Kaytlin Edwards"
+format: html
+editor: visual
+---
+
+# Housekeeping
+```{r}
+## Inventory every active object currently residing in session RAM
+objects()
+## Purge global environment
+rm(list = ls())
+# Confirm that global session memory now completely vacant
+objects()
+```
+
+
+

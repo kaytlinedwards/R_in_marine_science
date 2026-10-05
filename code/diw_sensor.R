@@ -40,6 +40,9 @@ sensor_daily <-
 
 
 
+# Load the primary data science framework and Excel import library
+library(tidyverse)
+library(readxl)
 
 
 
