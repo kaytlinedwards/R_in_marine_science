@@ -162,3 +162,60 @@ mass_compare_plot
 ### Ecological Interpretation
 
 Mean body mass differed considerably among penguin species. Gentoo penguins have substantially greater body mass when compares to Adelie and Chinstrap penguins. Adelie penguins showed consistant body mass across Biscoe, Dream, and Torgersen Islands, indicating little geographic variation in body size. These patterns suggest that differences in species specific morphology have a greater influence on body size, then geographic differences within this dataset.
+
+# Estuary Fish Survey – Data Rescue Mission
+
+## Data Rescue and Preparation
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+# Run the complete Estuary Fish Survey data-rescue workflow
+source("M2_WS2_EstuaryFishSurvey.R")
+```
+
+## Clean Master Dataset
+
+```{r}
+#| echo: false
+
+# Display a preview of the final clean master dataset
+knitr::kable(
+  head(master_complete, 10),
+  digits = 2,
+  caption = "Preview of the cleaned Estuary Fish Survey master dataset."
+)
+```
+
+## Statistical Summary
+
+```{r}
+#| echo: false
+
+knitr::kable(
+  estuary_summary,
+  digits = 2,
+  col.names = c(
+    "Scientific Name",
+    "Estuary Zone",
+    "Mean Catch",
+    "SD Catch",
+    "Mean Salinity",
+    "SD Salinity"
+  ),
+  caption = "Mean and standard deviation of fish catch and salinity by species and estuary zone."
+)
+```
+
+## Fish Abundance Along the Salinity Gradient
+
+```{r}
+#| echo: false
+#| fig-width: 10
+#| fig-height: 7
+#| fig-cap: "Fish abundance along the estuary salinity gradient for four fish taxa."
+
+estuary_plot
+```

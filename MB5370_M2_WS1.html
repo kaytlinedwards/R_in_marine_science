@@ -534,6 +534,474 @@ $ bill_ratio        &lt;dbl&gt; 2.090909, 2.270115, 2.238889, NA, 1.901554, 1.90
 </section>
 </section>
 </section>
+<section id="estuary-fish-survey-data-rescue-mission" class="level1">
+<h1>Estuary Fish Survey – Data Rescue Mission</h1>
+<section id="data-rescue-and-preparation" class="level2">
+<h2 class="anchored" data-anchor-id="data-rescue-and-preparation">Data Rescue and Preparation</h2>
+<p>The Estuary Fish Survey dataset combined fish catch records, spatial metadata, water-quality sensor measurements, and a taxonomic species dictionary. The datasets required cleaning and standardisation before they could be combined, including standardising site and species names, converting sensor timestamps to date-time objects, and replacing the legacy turbidity error value (-999) with missing values. The cleaned datasets were then joined to create a master dataset linking fish abundance with daily environmental conditions and estuary zones.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 427 × 5
+   sheet site       date                species       count
+   &lt;chr&gt; &lt;chr&gt;      &lt;dttm&gt;              &lt;chr&gt;         &lt;dbl&gt;
+ 1 1     Lower_ross 2026-05-01 00:00:00 barramundi        6
+ 2 1     Lower_ross 2026-05-01 00:00:00 MANGROVE JACK     3
+ 3 1     Lower_ross 2026-05-01 00:00:00 bream             4
+ 4 1     Lower_ross 2026-05-01 00:00:00 flathead          2
+ 5 1     Lower_ross 2026-05-02 00:00:00 barramundi        1
+ 6 1     Lower_ross 2026-05-02 00:00:00 MANGROVE JACK     1
+ 7 1     Lower_ross 2026-05-02 00:00:00 bream             3
+ 8 1     Lower_ross 2026-05-02 00:00:00 flathead          3
+ 9 1     Lower_ross 2026-05-03 00:00:00 MANGROVE JACK     2
+10 1     Lower_ross 2026-05-03 00:00:00 flathead          3
+# ℹ 417 more rows
+Rows: 427
+Columns: 5
+$ sheet   &lt;chr&gt; "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1…
+$ site    &lt;chr&gt; "Lower_ross", "Lower_ross", "Lower_ross", "Lower_ross", "Lower…
+$ date    &lt;dttm&gt; 2026-05-01, 2026-05-01, 2026-05-01, 2026-05-01, 2026-05-02, 2…
+$ species &lt;chr&gt; "barramundi", "MANGROVE JACK", "bream", "flathead", "barramund…
+$ count   &lt;dbl&gt; 6, 3, 4, 2, 1, 1, 3, 3, 2, 3, 1, 8, 4, 1, 1, 2, 1, 2, 4, 2, 2,…
+Rows: 4
+Columns: 4
+$ site_name &lt;chr&gt; "Upper_Ross", "mid_ross", "LOWER ROSS", "ross_mouth"
+$ lat       &lt;dbl&gt; -19.31, -19.28, -19.26, -19.25
+$ lon       &lt;dbl&gt; 146.74, 146.78, 146.81, 146.83
+$ zone      &lt;chr&gt; "Upstream", "Middle", "Downstream", "Marine"
+Rows: 11,520
+Columns: 5
+$ site        &lt;chr&gt; "upper_ross", "mid_ross", "lower_ross", "ross_mouth", "upp…
+$ timestamp   &lt;chr&gt; "01/05/2026 00:00", "01/05/2026 00:00", "01/05/2026 00:00"…
+$ temperature &lt;dbl&gt; 23.71379, 24.13302, 24.23558, 24.64147, 26.06955, 24.62576…
+$ salinity    &lt;dbl&gt; 4.054812, 15.742962, 28.934938, 33.891350, 3.962750, 12.05…
+$ turbidity   &lt;dbl&gt; 6.489046, 49.216967, 48.135752, 49.811493, 25.184739, 34.8…
+Rows: 4
+Columns: 2
+$ common_name     &lt;chr&gt; "barramundi", "mangrove_jack", "bream", "flathead"
+$ scientific_name &lt;chr&gt; "Lates calcarifer", "Lutjanus argentimaculatus", "Acan…
+Rows: 11,520
+Columns: 5
+$ site        &lt;chr&gt; "upper_ross", "mid_ross", "lower_ross", "ross_mouth", "upp…
+$ timestamp   &lt;dttm&gt; 2026-05-01 00:00:00, 2026-05-01 00:00:00, 2026-05-01 00:0…
+$ temperature &lt;dbl&gt; 23.71379, 24.13302, 24.23558, 24.64147, 26.06955, 24.62576…
+$ salinity    &lt;dbl&gt; 4.054812, 15.742962, 28.934938, 33.891350, 3.962750, 12.05…
+$ turbidity   &lt;dbl&gt; 6.489046, 49.216967, 48.135752, 49.811493, 25.184739, 34.8…
+# A tibble: 120 × 4
+   site       date                mean_temperature mean_salinity
+   &lt;chr&gt;      &lt;dttm&gt;                         &lt;dbl&gt;         &lt;dbl&gt;
+ 1 lower_ross 2026-05-01 00:00:00             23.8          28.4
+ 2 lower_ross 2026-05-02 00:00:00             24.0          27.7
+ 3 lower_ross 2026-05-03 00:00:00             24.2          28.1
+ 4 lower_ross 2026-05-04 00:00:00             24.0          28.2
+ 5 lower_ross 2026-05-05 00:00:00             23.9          27.6
+ 6 lower_ross 2026-05-06 00:00:00             24.0          28.2
+ 7 lower_ross 2026-05-07 00:00:00             24.0          27.6
+ 8 lower_ross 2026-05-08 00:00:00             24.0          28.0
+ 9 lower_ross 2026-05-09 00:00:00             24.0          27.8
+10 lower_ross 2026-05-10 00:00:00             23.9          28.1
+# ℹ 110 more rows
+Rows: 427
+Columns: 6
+$ sheet           &lt;chr&gt; "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1",…
+$ site            &lt;chr&gt; "lower_ross", "lower_ross", "lower_ross", "lower_ross"…
+$ date            &lt;dttm&gt; 2026-05-01, 2026-05-01, 2026-05-01, 2026-05-01, 2026-…
+$ species         &lt;chr&gt; "barramundi", "mangrove_jack", "bream", "flathead", "b…
+$ count           &lt;dbl&gt; 6, 3, 4, 2, 1, 1, 3, 3, 2, 3, 1, 8, 4, 1, 1, 2, 1, 2, …
+$ scientific_name &lt;chr&gt; "Lates calcarifer", "Lutjanus argentimaculatus", "Acan…
+Rows: 427
+Columns: 11
+$ sheet            &lt;chr&gt; "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1"…
+$ site             &lt;chr&gt; "lower_ross", "lower_ross", "lower_ross", "lower_ross…
+$ date             &lt;dttm&gt; 2026-05-01, 2026-05-01, 2026-05-01, 2026-05-01, 2026…
+$ species          &lt;chr&gt; "barramundi", "mangrove_jack", "bream", "flathead", "…
+$ count            &lt;dbl&gt; 6, 3, 4, 2, 1, 1, 3, 3, 2, 3, 1, 8, 4, 1, 1, 2, 1, 2,…
+$ scientific_name  &lt;chr&gt; "Lates calcarifer", "Lutjanus argentimaculatus", "Aca…
+$ mean_temperature &lt;dbl&gt; 23.79137, 23.79137, 23.79137, 23.79137, 23.98099, 23.…
+$ mean_salinity    &lt;dbl&gt; 28.35281, 28.35281, 28.35281, 28.35281, 27.74122, 27.…
+$ lat              &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ lon              &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ zone             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+Rows: 480
+Columns: 11
+$ scientific_name  &lt;chr&gt; "Acanthopagrus spp.", "Acanthopagrus spp.", "Acanthop…
+$ site             &lt;chr&gt; "lower_ross", "lower_ross", "lower_ross", "lower_ross…
+$ date             &lt;dttm&gt; 2026-05-01, 2026-05-02, 2026-05-03, 2026-05-04, 2026…
+$ sheet            &lt;chr&gt; "1", "1", NA, "1", "1", "1", "1", "1", NA, "1", NA, "…
+$ species          &lt;chr&gt; "bream", "bream", NA, "bream", "bream", "bream", "bre…
+$ count            &lt;dbl&gt; 4, 3, 0, 4, 1, 2, 2, 3, 0, 5, 0, 3, 1, 4, 1, 1, 2, 4,…
+$ mean_temperature &lt;dbl&gt; 23.79137, 23.98099, NA, 24.01207, 23.89543, 23.99354,…
+$ mean_salinity    &lt;dbl&gt; 28.35281, 27.74122, NA, 28.22692, 27.64229, 28.17766,…
+$ lat              &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ lon              &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ zone             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+Rows: 480
+Columns: 10
+$ scientific_name  &lt;chr&gt; "Acanthopagrus spp.", "Acanthopagrus spp.", "Acanthop…
+$ site             &lt;chr&gt; "lower_ross", "lower_ross", "lower_ross", "lower_ross…
+$ date             &lt;dttm&gt; 2026-05-01, 2026-05-02, 2026-05-03, 2026-05-04, 2026…
+$ count            &lt;dbl&gt; 4, 3, 0, 4, 1, 2, 2, 3, 0, 5, 0, 3, 1, 4, 1, 1, 2, 4,…
+$ mean_temperature &lt;dbl&gt; 23.79137, 23.98099, 24.17160, 24.01207, 23.89543, 23.…
+$ mean_salinity    &lt;dbl&gt; 28.35281, 27.74122, 28.05816, 28.22692, 27.64229, 28.…
+$ lat              &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ lon              &lt;dbl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ zone             &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, N…
+$ species          &lt;chr&gt; "bream", "bream", "bream", "bream", "bream", "bream",…
+# A tibble: 480 × 5
+   scientific_name    site       date                zone  mean_salinity
+   &lt;chr&gt;              &lt;chr&gt;      &lt;dttm&gt;              &lt;chr&gt;         &lt;dbl&gt;
+ 1 Acanthopagrus spp. lower_ross 2026-05-01 00:00:00 &lt;NA&gt;           28.4
+ 2 Acanthopagrus spp. lower_ross 2026-05-02 00:00:00 &lt;NA&gt;           27.7
+ 3 Acanthopagrus spp. lower_ross 2026-05-03 00:00:00 &lt;NA&gt;           28.1
+ 4 Acanthopagrus spp. lower_ross 2026-05-04 00:00:00 &lt;NA&gt;           28.2
+ 5 Acanthopagrus spp. lower_ross 2026-05-05 00:00:00 &lt;NA&gt;           27.6
+ 6 Acanthopagrus spp. lower_ross 2026-05-06 00:00:00 &lt;NA&gt;           28.2
+ 7 Acanthopagrus spp. lower_ross 2026-05-07 00:00:00 &lt;NA&gt;           27.6
+ 8 Acanthopagrus spp. lower_ross 2026-05-08 00:00:00 &lt;NA&gt;           28.0
+ 9 Acanthopagrus spp. lower_ross 2026-05-09 00:00:00 &lt;NA&gt;           27.8
+10 Acanthopagrus spp. lower_ross 2026-05-10 00:00:00 &lt;NA&gt;           28.1
+11 Acanthopagrus spp. lower_ross 2026-05-11 00:00:00 &lt;NA&gt;           27.8
+12 Acanthopagrus spp. lower_ross 2026-05-12 00:00:00 &lt;NA&gt;           28.5
+13 Acanthopagrus spp. lower_ross 2026-05-13 00:00:00 &lt;NA&gt;           27.7
+14 Acanthopagrus spp. lower_ross 2026-05-14 00:00:00 &lt;NA&gt;           27.9
+15 Acanthopagrus spp. lower_ross 2026-05-15 00:00:00 &lt;NA&gt;           27.9
+16 Acanthopagrus spp. lower_ross 2026-05-16 00:00:00 &lt;NA&gt;           28.4
+17 Acanthopagrus spp. lower_ross 2026-05-17 00:00:00 &lt;NA&gt;           27.7
+18 Acanthopagrus spp. lower_ross 2026-05-18 00:00:00 &lt;NA&gt;           27.7
+19 Acanthopagrus spp. lower_ross 2026-05-19 00:00:00 &lt;NA&gt;           28.2
+20 Acanthopagrus spp. lower_ross 2026-05-20 00:00:00 &lt;NA&gt;           27.9
+21 Acanthopagrus spp. lower_ross 2026-05-21 00:00:00 &lt;NA&gt;           28.2
+22 Acanthopagrus spp. lower_ross 2026-05-22 00:00:00 &lt;NA&gt;           27.9
+23 Acanthopagrus spp. lower_ross 2026-05-23 00:00:00 &lt;NA&gt;           28.0
+24 Acanthopagrus spp. lower_ross 2026-05-24 00:00:00 &lt;NA&gt;           28.3
+25 Acanthopagrus spp. lower_ross 2026-05-25 00:00:00 &lt;NA&gt;           28.9
+26 Acanthopagrus spp. lower_ross 2026-05-26 00:00:00 &lt;NA&gt;           28.0
+27 Acanthopagrus spp. lower_ross 2026-05-27 00:00:00 &lt;NA&gt;           27.8
+28 Acanthopagrus spp. lower_ross 2026-05-28 00:00:00 &lt;NA&gt;           28.1
+29 Acanthopagrus spp. lower_ross 2026-05-29 00:00:00 &lt;NA&gt;           27.1
+30 Acanthopagrus spp. lower_ross 2026-05-30 00:00:00 &lt;NA&gt;           27.4
+# ℹ 450 more rows
+# A tibble: 12 × 6
+   scientific_name zone  mean_catch sd_catch zone_mean_salinity zone_sd_salinity
+   &lt;chr&gt;           &lt;chr&gt;      &lt;dbl&gt;    &lt;dbl&gt;              &lt;dbl&gt;            &lt;dbl&gt;
+ 1 Acanthopagrus … Mari…       2.33     1.88               34.0            0.104
+ 2 Acanthopagrus … Midd…       2.23     1.57               14.9            0.399
+ 3 Acanthopagrus … &lt;NA&gt;        2.28     1.60               16.5           11.6  
+ 4 Lates calcarif… Mari…       1.57     1.36               34.0            0.104
+ 5 Lates calcarif… Midd…       2.2      1.32               14.9            0.399
+ 6 Lates calcarif… &lt;NA&gt;        3.2      2.23               16.5           11.6  
+ 7 Lutjanus argen… Mari…       1.5      1.14               34.0            0.104
+ 8 Lutjanus argen… Midd…       1.97     1.13               14.9            0.399
+ 9 Lutjanus argen… &lt;NA&gt;        1.95     1.41               16.5           11.6  
+10 Platycephalus … Mari…       5.67     1.30               34.0            0.104
+11 Platycephalus … Midd…       1.97     1.45               14.9            0.399
+12 Platycephalus … &lt;NA&gt;        2.2      1.45               16.5           11.6  </code></pre>
+</div>
+</div>
+</section>
+<section id="clean-master-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="clean-master-dataset">Clean Master Dataset</h2>
+<p>A complete zero-catch framework was created so that species that were not recorded at a site on a sampling day were represented by a catch count of zero rather than an absent record. Scientific names were incorporated using the species dictionary, and daily mean temperature, salinity, and spatial information were retained for each observation.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Preview of the cleaned Estuary Fish Survey master dataset.</caption>
+<colgroup>
+<col style="width: 19%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 6%">
+<col style="width: 17%">
+<col style="width: 14%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 5%">
+<col style="width: 8%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">scientific_name</th>
+<th style="text-align: left;">site</th>
+<th style="text-align: left;">date</th>
+<th style="text-align: right;">count</th>
+<th style="text-align: right;">mean_temperature</th>
+<th style="text-align: right;">mean_salinity</th>
+<th style="text-align: right;">lat</th>
+<th style="text-align: right;">lon</th>
+<th style="text-align: left;">zone</th>
+<th style="text-align: left;">species</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Acanthopagrus spp.</td>
+<td style="text-align: left;">lower_ross</td>
+<td style="text-align: left;">2026-05-01</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">23.79</td>
+<td style="text-align: right;">28.35</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">bream</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Acanthopagrus spp.</td>
+<td style="text-align: left;">lower_ross</td>
+<td style="text-align: left;">2026-05-02</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">23.98</td>
+<td style="text-align: right;">27.74</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">bream</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Acanthopagrus spp.</td>
+<td style="text-align: left;">lower_ross</td>
+<td style="text-align: left;">2026-05-03</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">24.17</td>
+<td style="text-align: right;">28.06</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">bream</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Acanthopagrus spp.</td>
+<td style="text-align: left;">lower_ross</td>
+<td style="text-align: left;">2026-05-04</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">24.01</td>
+<td style="text-align: right;">28.23</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">bream</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Acanthopagrus spp.</td>
+<td style="text-align: left;">lower_ross</td>
+<td style="text-align: left;">2026-05-05</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">23.90</td>
+<td style="text-align: right;">27.64</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">bream</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Acanthopagrus spp.</td>
+<td style="text-align: left;">lower_ross</td>
+<td style="text-align: left;">2026-05-06</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">23.99</td>
+<td style="text-align: right;">28.18</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">bream</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Acanthopagrus spp.</td>
+<td style="text-align: left;">lower_ross</td>
+<td style="text-align: left;">2026-05-07</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">23.99</td>
+<td style="text-align: right;">27.56</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">bream</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Acanthopagrus spp.</td>
+<td style="text-align: left;">lower_ross</td>
+<td style="text-align: left;">2026-05-08</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">24.03</td>
+<td style="text-align: right;">27.98</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">bream</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Acanthopagrus spp.</td>
+<td style="text-align: left;">lower_ross</td>
+<td style="text-align: left;">2026-05-09</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">24.02</td>
+<td style="text-align: right;">27.83</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">bream</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Acanthopagrus spp.</td>
+<td style="text-align: left;">lower_ross</td>
+<td style="text-align: left;">2026-05-10</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">23.92</td>
+<td style="text-align: right;">28.13</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: right;">NA</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">bream</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="statistical-summary" class="level2">
+<h2 class="anchored" data-anchor-id="statistical-summary">Statistical Summary</h2>
+<p>Fish catch and salinity were summarised for each scientific species within each estuary zone. Mean values describe the central tendency within each group, while standard deviation describes the variation among observations.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Mean and standard deviation of fish catch and salinity by species and estuary zone.</caption>
+<colgroup>
+<col style="width: 30%">
+<col style="width: 15%">
+<col style="width: 12%">
+<col style="width: 10%">
+<col style="width: 16%">
+<col style="width: 14%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Scientific Name</th>
+<th style="text-align: left;">Estuary Zone</th>
+<th style="text-align: right;">Mean Catch</th>
+<th style="text-align: right;">SD Catch</th>
+<th style="text-align: right;">Mean Salinity</th>
+<th style="text-align: right;">SD Salinity</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Acanthopagrus spp.</td>
+<td style="text-align: left;">Marine</td>
+<td style="text-align: right;">2.33</td>
+<td style="text-align: right;">1.88</td>
+<td style="text-align: right;">34.02</td>
+<td style="text-align: right;">0.10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Acanthopagrus spp.</td>
+<td style="text-align: left;">Middle</td>
+<td style="text-align: right;">2.23</td>
+<td style="text-align: right;">1.57</td>
+<td style="text-align: right;">14.91</td>
+<td style="text-align: right;">0.40</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Acanthopagrus spp.</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">2.28</td>
+<td style="text-align: right;">1.60</td>
+<td style="text-align: right;">16.46</td>
+<td style="text-align: right;">11.61</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Lates calcarifer</td>
+<td style="text-align: left;">Marine</td>
+<td style="text-align: right;">1.57</td>
+<td style="text-align: right;">1.36</td>
+<td style="text-align: right;">34.02</td>
+<td style="text-align: right;">0.10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Lates calcarifer</td>
+<td style="text-align: left;">Middle</td>
+<td style="text-align: right;">2.20</td>
+<td style="text-align: right;">1.32</td>
+<td style="text-align: right;">14.91</td>
+<td style="text-align: right;">0.40</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Lates calcarifer</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">3.20</td>
+<td style="text-align: right;">2.23</td>
+<td style="text-align: right;">16.46</td>
+<td style="text-align: right;">11.61</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Lutjanus argentimaculatus</td>
+<td style="text-align: left;">Marine</td>
+<td style="text-align: right;">1.50</td>
+<td style="text-align: right;">1.14</td>
+<td style="text-align: right;">34.02</td>
+<td style="text-align: right;">0.10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Lutjanus argentimaculatus</td>
+<td style="text-align: left;">Middle</td>
+<td style="text-align: right;">1.97</td>
+<td style="text-align: right;">1.13</td>
+<td style="text-align: right;">14.91</td>
+<td style="text-align: right;">0.40</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Lutjanus argentimaculatus</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">1.95</td>
+<td style="text-align: right;">1.41</td>
+<td style="text-align: right;">16.46</td>
+<td style="text-align: right;">11.61</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Platycephalus spp.</td>
+<td style="text-align: left;">Marine</td>
+<td style="text-align: right;">5.67</td>
+<td style="text-align: right;">1.30</td>
+<td style="text-align: right;">34.02</td>
+<td style="text-align: right;">0.10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Platycephalus spp.</td>
+<td style="text-align: left;">Middle</td>
+<td style="text-align: right;">1.97</td>
+<td style="text-align: right;">1.45</td>
+<td style="text-align: right;">14.91</td>
+<td style="text-align: right;">0.40</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Platycephalus spp.</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: right;">2.20</td>
+<td style="text-align: right;">1.45</td>
+<td style="text-align: right;">16.46</td>
+<td style="text-align: right;">11.61</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="fish-abundance-along-the-salinity-gradient" class="level2">
+<h2 class="anchored" data-anchor-id="fish-abundance-along-the-salinity-gradient">Fish Abundance Along the Salinity Gradient</h2>
+<p>The figure below shows variation in fish abundance along the estuary salinity gradient. Panels separate the four scientific species, while point colours represent estuary zones ordered from upstream through to the marine environment. The fitted lines provide a visual indication of the relationship between salinity and fish abundance for each species.</p>
+<div class="cell">
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="MB5370_M2_WS1_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="960"></p>
+<figcaption>Fish abundance along the estuary salinity gradient for four fish taxa.</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
 
 </main>
 <!-- /main column -->
