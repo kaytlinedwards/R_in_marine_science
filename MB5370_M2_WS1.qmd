@@ -23,8 +23,11 @@ objects()
 ### Load Data and Packages
 
 ```{r}
-# Run the data preparation script
+# Run the Workshop 1 data preparation script
 source("code/diw_sensor.R")
+
+# Load the original Palmer Penguins dataset
+penguins <- palmerpenguins::penguins
 ```
 
 ## Variation in Body Mass Across Species and Island
@@ -163,7 +166,11 @@ mass_compare_plot
 
 Mean body mass differed considerably among penguin species. Gentoo penguins have substantially greater body mass when compares to Adelie and Chinstrap penguins. Adelie penguins showed consistant body mass across Biscoe, Dream, and Torgersen Islands, indicating little geographic variation in body size. These patterns suggest that differences in species specific morphology have a greater influence on body size, then geographic differences within this dataset.
 
-# Estuary Fish Survey – Data Rescue Mission
+# Workshop 2: Estuary Fish Survey
+
+## Introduction
+
+This workshop focused on cleaning, integrating, and visualising fish survey data collected across four sampling sites in the Ross River Estuary, Townsville, Queensland. Fish catch records from the four sites were combined with site metadata, taxonomic information, and environmental sensor measurements to gain insight into the spatial variation and distribution of fish abundance. Additional consideration was given to salinity gradients and differences in fish abundance between estuarine zones. 
 
 ## Data Rescue and Preparation
 
@@ -172,50 +179,124 @@ Mean body mass differed considerably among penguin species. Gentoo penguins have
 #| message: false
 #| warning: false
 
-# Run the complete Estuary Fish Survey data-rescue workflow
-source("M2_WS2_EstuaryFishSurvey.R")
+# Run the Workshop 2 data cleaning and preparation script
+source("code/WS2_EstuaryFish_KeystoneEx.R")
+
+# Inspect the final cleaned dataset
+dplyr::glimpse(catch_data_final)
 ```
 
-## Clean Master Dataset
-
-```{r}
-#| echo: false
-
-# Display a preview of the final clean master dataset
-knitr::kable(
-  head(master_complete, 10),
-  digits = 2,
-  caption = "Preview of the cleaned Estuary Fish Survey master dataset."
-)
-```
+The final master dataset 'catch_data_final' represents fish catch records across four estuarine zones combined with their corresponding site metadata, species identification and count, and environmental measurements of salinity, turbidity, and temperature. The species and site names were standardized to ensure consistency across the dataset. The dataset is now ready for analysis and visualisation.
 
 ## Statistical Summary
 
+### Environmental Variation Across Estuarine Zones
+
 ```{r}
 #| echo: false
+#| message: false
+#| warning: false
 
+# Display salinity summary statistics by estuarine zone
 knitr::kable(
-  estuary_summary,
+  sal_sum,
   digits = 2,
-  col.names = c(
-    "Scientific Name",
-    "Estuary Zone",
-    "Mean Catch",
-    "SD Catch",
-    "Mean Salinity",
-    "SD Salinity"
-  ),
-  caption = "Mean and standard deviation of fish catch and salinity by species and estuary zone."
+  col.names = c("Estuarine Zone", "Standard Deviation (ppt)", "Median Salinity (ppt)"),
+  caption = "Median salinity and standard deviation across estuarine zones in the Ross River Estuary."
 )
 ```
 
-## Fish Abundance Along the Salinity Gradient
+Median salinity increased progressively from upstream (4.99 ppt) to marine (34.02 ppt) zones. Standard deviations were relatively low across all four zones (0.10–0.39 ppt), indicating limited variation in salinity measurements within each zone. Though low, the middle-estuary zone exhibited the highest standard deviation value (SD = 0.39 ppt), suggesting slightly higher variability in salinity conditions.
+
+### Salinity Gradient Across Estuarine Zones
 
 ```{r}
 #| echo: false
-#| fig-width: 10
-#| fig-height: 7
-#| fig-cap: "Fish abundance along the estuary salinity gradient for four fish taxa."
+#| message: false
+#| warning: false
+#| fig-cap: "Median salinity (±1 SD) across four zones of the Ross River Estuary, Townsville, Queensland, in May 2026."
 
-estuary_plot
+sal_sum |>
+  ggplot(aes(x = zone, y = median_salinity)) +
+  geom_point(size = 3, colour = "steelblue") +
+  geom_errorbar(
+    aes(
+      ymin = median_salinity - sd_salinity,
+      ymax = median_salinity + sd_salinity
+    ),
+    width = 0.2,
+    colour = "steelblue"
+  ) +
+  theme_minimal() +
+  labs(
+    x = "Estuarine Zone",
+    y = "Median Salinity (ppt)"
+  )
 ```
+
+As expected, salinity differed significantly across the four estuarine zones, reflecting the transition from upstream estuarine conditions to marine conditions. This establishes the environmental salinity gradient that may influence fish abundance and distribution patterns across the Ross River estuary. The error bars indicate the standard deviation of salinity measurements within each zone, highlighting the relative consistency of salinity conditions.
+
+## Fish Abundance Across Estuarine Zones
+
+To evaluate the patterns of fish abundance across the estuarine zones, we calculated the mean catch and standard error per species within each estuarine zone. This analyses were used to visualize the spatial variation in fish abundance and identify species that may be more abundant in specific zones of the estuary.
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+
+# Display mean fish abundance and standard error by species and zone
+knitr::kable(
+  fish_stats,
+  digits = 2,
+  col.names = c(
+    "Estuarine Zone",
+    "Scientific Name",
+    "Mean Daily Catch",
+    "Standard Error"
+  ),
+  caption = "Mean daily fish catch and S.E. by species and estuarine zone in the Ross River Estuary."
+)
+```
+
+### Fish Abundance Patterns Across the Estuarine Gradient
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-cap: "Mean daily abundance of four fish taxa across the Ross River Estuary, Townsville, Queensland. Error bars represent standard error."
+
+fish_stats |>
+  ggplot(aes(x = zone, y = mean_catch, fill = scientific_name)) +
+  geom_line(aes(group = 1)) +
+  geom_point(
+    data = catch_data_final,
+    aes(x = zone, y = count),
+    position = position_jitter(width = 0.2),
+    alpha = 0.2,
+    size = 1,
+    inherit.aes = FALSE
+  ) +
+  geom_point(position = "dodge", size = 4, pch = 23) +
+  geom_errorbar(
+    aes(ymin = mean_catch - sem_catch,
+        ymax = mean_catch + sem_catch),
+    position = position_dodge(0.9),
+    width = 0.2
+  ) +
+  facet_wrap(~ scientific_name, scales = "fixed") +
+  theme_minimal() +
+  theme(
+    strip.text = element_text(face = "italic", size = 10, colour = "grey20"),
+    legend.position = "none"
+  ) +
+  labs(
+    x = "Spatial Zone",
+    y = expression("Abundance (n day"^-1*")")
+  )
+```
+
+### Ecological Interpretation of Fish Abundance
+
+Fish abundance varied across the estuarine gradient, with some species showing clear differences in abundance among zones. Most notably, *Lates calcarifer* (Barramundi) exhibited substantially greater abundance in the upstream zone, where its mean abundance was nearly twice that of the other species observed. In contrast, *Platycephalus spp.* (Flathead) were most abundant in the marine zone, again exhibiting approximately twice the abundance of most other species within that zone. *Lutjanus argentimaculatus* (Mangrove Jack) and *Acanthopagrus spp*. (Bream) were more evenly distributed across the estuarine gradient, with relatively minor variation in abundance between zones. These patterns suggest that environmental factors, sych as salinity and habitat structure, may influence fish distribution within the Ross River Estuary. Overall, the observed differences highlight the importance of considering spatial variation in environmental conditions when assessing estuarine fish communities.
